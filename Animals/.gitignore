@@ -1,9 +1,14 @@
 # Created by https://www.toptal.com/developers/gitignore/api/xcode,swift,objective-c,cocoapods,swiftpackagemanager
 # Edit at https://www.toptal.com/developers/gitignore?templates=xcode,swift,objective-c,cocoapods,swiftpackagemanager
 
+## GIT ##
+Podfile.lock
+
 ### Xcodegen ###
-*.xcodeproj
-*.xcworkspace
+**.xcodeproj
+**.xcworkspace
+Animals.xcodeproj
+Animals.xcworkspace
 
 ### CocoaPods ###
 ## CocoaPods GitIgnore Template
