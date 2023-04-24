@@ -1,0 +1,84 @@
+############################################################
+# Xcodegen documentation
+# https://github.com/yonaskolb/XcodeGen
+############################################################
+
+name: Animals
+
+options:
+  xcodeVersion: "14.0"
+  deploymentTarget:
+    iOS: 15
+
+settings:
+  MARKETING_VERSION: "0.0.1"
+  VERSIONING_SYSTEM: "apple.generic"
+  SWIFT_VERSION: 5.0
+  IPHONEOS_DEPLOYMENT_TARGET: 15.0
+  CURRENT_PROJECT_VERSION: 0.0.1
+  CODE_SIGN_IDENTITY: "iPhone Developer"
+  ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES: "YES"
+  ARCHS: $(ARCHS_STANDARD) 
+
+targets:
+  Animals:
+    type: application
+    platform: iOS
+    deploymentTarget: 
+      iOS: "15.0"
+
+    sources: 
+      - path: "Animals"
+
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.programou.Animals
+      INFOPLIST_FILE: Animals/Info.plist
+      GOOGLESERVICE_INFO_PLIST_DIR: Animals/
+      CODE_SIGNING_STYLE: "Manual"
+      DEVELOPMENT_TEAM: ""
+      PROVISIONING_PROFILE: "Wildcard"
+
+    info:
+      path: Animals/Info.plist
+      properties:
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UILaunchStoryboardName: LaunchScreen.storyboard
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+          UISceneConfigurations:
+            UIWindowSceneSessionRoleApplication:
+              - UISceneConfigurationName: Default Configuration
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).SceneDelegate
+
+  AnimalsTests:
+    platform: iOS
+    type: bundle.unit-test
+
+    sources: 
+      - path: AnimalsTests
+
+    dependencies:
+      - target: Animals
+
+schemes:
+  Debug:
+    build:
+      targets:
+        Animals: [run, test]
+      parallelizeBuild: false
+      buildImplicitDependencies: true
+
+    run:
+      config: Debug
+
+    test: 
+      config: Debug
+      gatherCoverageData: true
+      coverageTargets:
+        - Animals
+      targets:
+        - AnimalsTests
+
+
+# rm -rf Animals.xcodeproj && rm -rf Animals.xcworkspace && xcodegen generate && pod install && open Animals.xcworkspace
+# rm -rf Animals.xcodeproj && rm -rf Animals.xcworkspace && xcodegen generate
