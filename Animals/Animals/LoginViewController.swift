@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Hero
 
 final class LoginViewController: UIViewController {
     
@@ -31,6 +32,7 @@ final class LoginViewController: UIViewController {
         button.setTitle("Enter", for: .normal)
         button.layer.cornerRadius = 8
         button.backgroundColor = Theme.green500
+        button.isUserInteractionEnabled = true
         
         button.addTarget(self, action: #selector(onEnterTapHandler), for: .touchUpInside)
         return button
@@ -88,6 +90,10 @@ final class LoginViewController: UIViewController {
     }
     
     @objc private func onEnterTapHandler() {
+        let homeController = HomeViewController()
+        homeController.hero.isEnabled = true
+        homeController.hero.modalAnimationType = .slide(direction: .up)
         
+        present(homeController, animated: true)
     }
 }
