@@ -8,27 +8,36 @@
 import UIKit
 
 enum Theme {
-    static let white = UIColor(hex: "#ffffff")
-    static let black = UIColor(hex: "#000000")
+    enum Color {
+        static let white = UIColor(hex: "#ffffff")
+        static let black = UIColor(hex: "#000000")
+        
+        static let gray100 = UIColor(hex: "#E1E1E6")
+        static let gray300 = UIColor(hex: "#C4C4CC")
+        static let gray400 = UIColor(hex: "#8D8D99")
+        static let gray500 = UIColor(hex: "#7C7C8A")
+        static let gray600 = UIColor(hex: "#323238")
+        static let gray700 = UIColor(hex: "#29292E")
+        static let gray800 = UIColor(hex: "#202024")
+        static let gray900 = UIColor(hex: "#121214")
+        
+        static let green300 = UIColor(hex: "#00B37E")
+        static let green500 = UIColor(hex: "#00875F")
+        static let green700 = UIColor(hex: "#015F43")
+        
+        static let red300 = UIColor(hex: "#f75a68")
+        static let red500 = UIColor(hex: "#AB222E")
+        static let red700 = UIColor(hex: "#7A1921")
+        
+        static let yellow500 = UIColor(hex: "#FBA94C")
+    }
     
-    static let gray100 = UIColor(hex: "#E1E1E6")
-    static let gray300 = UIColor(hex: "#C4C4CC")
-    static let gray400 = UIColor(hex: "#8D8D99")
-    static let gray500 = UIColor(hex: "#7C7C8A")
-    static let gray600 = UIColor(hex: "#323238")
-    static let gray700 = UIColor(hex: "#29292E")
-    static let gray800 = UIColor(hex: "#202024")
-    static let gray900 = UIColor(hex: "#121214")
-    
-    static let green300 = UIColor(hex: "#00B37E")
-    static let green500 = UIColor(hex: "#00875F")
-    static let green700 = UIColor(hex: "#015F43")
-    
-    static let red300 = UIColor(hex: "#f75a68")
-    static let red500 = UIColor(hex: "#AB222E")
-    static let red700 = UIColor(hex: "#7A1921")
-    
-    static let yellow500 = UIColor(hex: "#FBA94C")
+    enum Size {
+        private static let base = CGFloat(4)
+        static let small = base * 2
+        static let mid = base * 4
+        static let large = base * 8
+    }
 }
 
 private extension UIColor {

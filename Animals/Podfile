@@ -6,6 +6,10 @@ target 'Animals' do
   
   pod 'Hero'
   pod 'SnapKit'
+  pod 'Kingfisher'
+  pod 'Moya'
+  pod 'lottie-ios'
+  pod 'Iconic'
 
   target 'AnimalsTests' do
     inherit! :search_paths
