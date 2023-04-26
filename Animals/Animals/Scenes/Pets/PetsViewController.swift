@@ -12,9 +12,12 @@ import Lottie
 
 final class PetsViewController: UIViewController {
     
-    private var pets = [Pet]()
-    private let repository: PetsRepositoryProvider
     var coordinateToAddNewAnimal: (() -> Void)?
+    
+    private var viewModel: PetsViewModel
+    private var petControllers = [CellController]() {
+        didSet { tableView.reloadData() }
+    }
     
     private lazy var loaderView: LottieAnimationView = {
         let av = LottieAnimationView(name: "lootie-pet-loadier")
@@ -27,6 +30,7 @@ final class PetsViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.backgroundColor = Theme.Color.gray800
         tableView.separatorStyle = .none
         return tableView
@@ -50,8 +54,8 @@ final class PetsViewController: UIViewController {
         return stack
     }()
     
-    init(repository: PetsRepositoryProvider) {
-        self.repository = repository
+    init(viewModel: PetsViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -60,14 +64,46 @@ final class PetsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Pets"
+        
+        registerCells()
+        
+        configureStyle()
+        configureHierarchy()
+        configureConstraints()
+        
+        viewModel.onCompletesWithPets = { [weak self] pets in
+            self?.petControllers = pets.map(PetCellController.init(pet:))
+            self?.setLoading(false)
+        }
+        
+        viewModel.onCompletesWithoutPets = { [weak self] in
+            self?.petControllers = [WitoutPetCellController()]
+            self?.setLoading(false)
+        }
+        
+        viewModel.onCompleteWithFailure = { [weak self] in
+            print("error")
+            self?.setLoading(false)
+        }
+    }
+    
+    private func configureStyle() {
         view.backgroundColor = Theme.Color.gray800
-        
+    }
+    
+    private func registerCells() {
         tableView.register(PetCell.self)
-        
+        tableView.register(WitoutPetCell.self)
+    }
+    
+    private func configureHierarchy() {
         verticalStack.addArrangedSubview(tableView)
         verticalStack.addArrangedSubview(addAnimalButton)
         view.addSubview(verticalStack)
         view.addSubview(loaderView)
+    }
+    
+    private func configureConstraints() {
         
         addAnimalButton.snp.makeConstraints {
             $0.height.equalTo(40)
@@ -89,18 +125,7 @@ final class PetsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setLoading(true)
-        repository.loadPets { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success(let receivedPets):
-                self.pets = receivedPets
-                self.tableView.reloadData()
-            case .failure(let error):
-                print("Error:", error.localizedDescription)
-            }
-
-            self.setLoading(false)
-        }
+        viewModel.loadPets()
     }
     
     private func setLoading(_ isLoading: Bool) {
@@ -114,23 +139,22 @@ final class PetsViewController: UIViewController {
     }
 }
 
-extension PetsViewController: UITableViewDataSource {
+extension PetsViewController: UITableViewDataSource, UITableViewDelegate {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return pets.count
+        return petControllers.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.reuse(for: PetCell.self, at: indexPath)
-        
-        let pet = pets[indexPath.row]
-        let cellViewData = PetCell.ViewData(name: pet.name)
-        cell.configure(cellViewData)
-        cell.petImage.kf.setImage(with: URL(string: pet.imageURL))
-        return cell
+        return petControllers[indexPath.row].tableView(tableView, cellForRowAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let height = petControllers[indexPath.row].tableView?(tableView, heightForRowAt: indexPath)
+        return height ?? UITableView.automaticDimension
     }
 }

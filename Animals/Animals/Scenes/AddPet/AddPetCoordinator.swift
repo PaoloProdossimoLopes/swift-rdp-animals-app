@@ -17,7 +17,8 @@ final class AddPetCoordinator: Coorindator {
     
     func start() {
         let repository = MoyaRepostory()
-        let controller = AddPetViewController(repository: repository)
+        let viewModel = AddPetViewModelImpl(repository: repository)
+        let controller = AddPetViewController(viewModel: viewModel)
         controller.onCloseAction = { [weak controller, weak root] in
             controller?.dismiss(animated: true)
             root?.viewWillAppear(true)

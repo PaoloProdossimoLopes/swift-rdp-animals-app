@@ -7,24 +7,22 @@
 
 import UIKit
 import Iconic
+import SnapKit
 
 struct NewPet {
     let name: String
     let age: String
 }
 
-protocol AddPetRepotitoryProvider {
-    func registerPet(_ pet: NewPet, completion: @escaping (Error?) -> Void)
-}
-
 final class AddPetViewController: UIViewController {
     
-    private let repository: AddPetRepotitoryProvider
     var onCloseAction: (() -> Void)?
     var presentAlertError: ((Error) -> Void)?
     
-    init(repository: AddPetRepotitoryProvider) {
-        self.repository = repository
+    private var viewModel: AddPetViewModel
+    
+    init(viewModel: AddPetViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -32,7 +30,10 @@ final class AddPetViewController: UIViewController {
     
     private lazy var closeButton: UIButton = {
         let button = UIButton()
-        let image = FontAwesomeIcon.homeIcon.image(ofSize: .init(width: 30, height: 30), color: .black)
+        let image = FontAwesomeIcon.homeIcon.image(
+            ofSize: .init(width: 30, height: 30),
+            color: Theme.Color.green500
+        )
         button.setImage(image, for: .normal)
         button.addTarget(self, action: #selector(closeActionHandler), for: .touchUpInside)
         return button
@@ -43,8 +44,7 @@ final class AddPetViewController: UIViewController {
         tf.placeholder = "Nome"
         let image = FontAwesomeIcon.homeIcon.image(
             ofSize: .init(width: 50, height: 50),
-            color: Theme.Color.gray300
-        )
+            color: Theme.Color.gray300)
         tf.leftView = FontAwesomeIconView(image: image)
         return tf
     }()
@@ -97,8 +97,26 @@ final class AddPetViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = Theme.Color.black.withAlphaComponent(0.3)
+        viewModel.onCompleteWithFailure = { [weak self] error in
+            self?.presentAlertError?(error)
+            self?.hideLoader()
+        }
         
+        viewModel.onCompleteWithSuccess = { [weak self] in
+            self?.onCloseAction?()
+            self?.hideLoader()
+        }
+        
+        configureStyle()
+        configureViewHierarchy()
+        configureConstraint()
+    }
+    
+    private func configureStyle() {
+        view.backgroundColor = Theme.Color.black.withAlphaComponent(0.3)
+    }
+    
+    private func configureViewHierarchy() {
         addNewPetButton.addSubview(loaderIndicator)
         
         verticalIcon.addArrangedSubview(closeButton)
@@ -108,7 +126,9 @@ final class AddPetViewController: UIViewController {
         
         containerView.addSubview(verticalIcon)
         view.addSubview(containerView)
-        
+    }
+    
+    private func configureConstraint() {
         nameTextField.snp.makeConstraints {
             $0.height.equalTo(40)
         }
@@ -147,35 +167,23 @@ final class AddPetViewController: UIViewController {
         let name = nameTextField.text ?? ""
         let age = ageTextField.text ?? ""
         
-        let pet = NewPet(name: name, age: age)
-        
-        showLoader(true)
-        repository.registerPet(pet) { [weak self] error in
-            self?.showLoader(false)
-            
-            if let error {
-                self?.presentAlertError?(error)
-                return
-            }
-            
-            self?.onCloseAction?()
-        }
+        presentLoader()
+        viewModel.createPet(NewPet(name: name, age: age))
     }
     
     @objc private func closeActionHandler() {
         onCloseAction?()
     }
     
-    func showLoader(_ showLoader: Bool) {
-        let perform = showLoader ? { [weak self] in
-            self?.loaderIndicator.startAnimating()
-            self?.addNewPetButton.setTitle("", for: .normal)
-        } : { [weak self] in
-            self?.loaderIndicator.stopAnimating()
-            self?.addNewPetButton.setTitle("adicionar pet", for: .normal)
-        }
-        
-        perform()
-        loaderIndicator.isHidden = !showLoader
+    func presentLoader() {
+        loaderIndicator.startAnimating()
+        loaderIndicator.isHidden = false
+        addNewPetButton.setTitle("", for: .normal)
+    }
+    
+    func hideLoader() {
+        loaderIndicator.stopAnimating()
+        loaderIndicator.isHidden = true
+        addNewPetButton.setTitle("adicionar pet", for: .normal)
     }
 }

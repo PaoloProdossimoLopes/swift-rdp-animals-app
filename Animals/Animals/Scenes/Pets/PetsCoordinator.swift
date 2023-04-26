@@ -19,15 +19,16 @@ final class PetsCoordinator: Coorindator {
     func start() {
         let repository = MoyaRepostory()
         let mainRepositoryDispatcher = DispachMainDecorator(repository)
-        let homeController = PetsViewController(repository: mainRepositoryDispatcher)
-        homeController.modalPresentationStyle = .overCurrentContext
-        homeController.hero.isEnabled = true
-        homeController.hero.modalAnimationType = .cover(direction: .up)
+        let viewModel = PetsViewModelImpl(repository: mainRepositoryDispatcher)
+        let controller = PetsViewController(viewModel: viewModel)
+        controller.modalPresentationStyle = .overCurrentContext
+        controller.hero.isEnabled = true
+        controller.hero.modalAnimationType = .cover(direction: .up)
         
-        homeController.coordinateToAddNewAnimal = coordinateToAddNewAnimalAdapter(
-            controller: homeController)
+        controller.coordinateToAddNewAnimal = coordinateToAddNewAnimalAdapter(
+            controller: controller)
 
-        root.present(homeController, animated: true)
+        root.present(controller, animated: true)
     }
     
     private func coordinateToAddNewAnimalAdapter(controller: UIViewController) -> (() -> Void) {

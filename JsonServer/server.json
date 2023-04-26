@@ -1,25 +1,16 @@
 {
   "pets": [
     {
-      "id": 0,
-      "nome": "olaf",
-      "image-url": "https://static.ndmais.com.br/2021/10/samoieda.png"
-    },
-    {
-      "id": 1,
-      "nome": "Alfred",
-      "image-url": "https://love.doghero.com.br/wp-content/uploads/2018/12/golden-retriever-1.png"
-    },
-    {
-      "id": 2,
-      "nome": "Sof",
-      "image-url": "https://www.florence.edu.br/wp-content/uploads/2022/08/Imagem-Materia_Dia-do-Cachorro.png"
+      "image-url": "https://love.doghero.com.br/wp-content/uploads/2018/12/golden-retriever-1.png",
+      "age": "2",
+      "nome": "Olaf",
+      "id": 1
     },
     {
       "image-url": "https://love.doghero.com.br/wp-content/uploads/2018/12/golden-retriever-1.png",
-      "nome": "Carlos",
-      "age": "2",
-      "id": 3
+      "nome": "Loader",
+      "age": "3",
+      "id": 2
     }
   ]
 }
